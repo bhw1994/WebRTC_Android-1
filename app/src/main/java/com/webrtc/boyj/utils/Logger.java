@@ -23,6 +23,8 @@ public class Logger {
         Log.e(tag(), msg);
     }
 
+    public static void signalingEvent(String eventString) {Log.i("SignalingEvent", eventString);}
+
     private static String tag() {
         int level = Thread.currentThread().getStackTrace().length;
         level = level >= 5 ? 4 : level-1;
@@ -32,6 +34,6 @@ public class Logger {
         final String className = classPath.substring(classPath.lastIndexOf(".") + 1);
         final String methodName = trace.getMethodName();
         final int lineNumber = trace.getLineNumber();
-        return String.format("BOYJ# %s.%s(%s:%s) ", className, methodName, fileName, lineNumber);
+        return String.format("bhw1994BOYJ# %s.%s(%s:%s) ", className, methodName, fileName, lineNumber);
     }
 }

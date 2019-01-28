@@ -30,10 +30,10 @@ public class UserRepository {
         // TODO : Firebase로부터 유저리스트 가져오면 아래 수정
 
         List<User> list = new ArrayList<>();
-        list.add(new User("오OO", "010-0000-0001"));
+        list.add(new User("오석현", "010-0000-0001"));
         list.add(new User("윤OO", "010-0000-0002"));
         list.add(new User("장OO", "010-0000-0003"));
-        list.add(new User("변OO", "010-0000-0004"));
+        list.add(new User("변현우", "010-0000-0004"));
 
         return Single.just(list)
                 .subscribeOn(Schedulers.newThread());

@@ -66,12 +66,30 @@ dependencies {
     // RxJava
     implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     implementation "io.reactivex.rxjava2:rxjava:$rxjava_version"
+
+
+
+
     implementation 'com.google.firebase:firebase-core:16.0.6'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-firestore:17.1.5'
 
 
     implementation 'com.android.support:multidex:1.0.3'
+
+
+    implementation ("io.socket:socket.io-client:$socket_version") {
+        exclude group: 'org.json', module: 'json'
+    }
+    implementation "org.webrtc:google-webrtc:$webrtc_version"
+
+    implementation 'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.9.1'
+
+
 
 }
 apply plugin: 'com.google.gms.google-services'

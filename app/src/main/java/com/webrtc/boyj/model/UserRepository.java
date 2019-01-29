@@ -27,10 +27,8 @@ public class UserRepository {
         return userRepository;
     }
 
-    public Single<List<User>> getItems() {
+    public Single<List<User>> getUserList() {
         // TODO : Firebase로부터 유저리스트 가져오면 아래 수정
         return UserDAO.readAll();
-
-
     }
 }

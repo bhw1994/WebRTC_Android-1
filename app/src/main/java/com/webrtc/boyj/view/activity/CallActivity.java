@@ -1,6 +1,7 @@
 package com.webrtc.boyj.view.activity;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -23,20 +24,26 @@ public class CallActivity extends BaseActivity<ActivityCallBinding, CallViewMode
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final User user = (User) getIntent().getSerializableExtra(Constants.EXTRA_USER);
-        if(user != null) {
-            binding.setVariable(BR.item, user);
-        }
+        Intent intent=getIntent();
+
+        boolean iscaller=intent.getBooleanExtra("caller",true);
+
 
         RendererManager rendererManager=new RendererManager(EglBaseManager.getEglBase());
         rendererManager.initSurfaeView(binding.localView);
         rendererManager.initSurfaeView(binding.remoteView);
 
         model.getIsActive().observe(this, isActive -> finish());
-        if(user.getName().equals("오석현"))
-            model.call();
-        else
-            model.accept();
+        if(iscaller){
+            String deviceToken=intent.getStringExtra("deviceToken");
+            model.call(deviceToken);
+        }
+
+        else{
+            String room=intent.getStringExtra("room");
+            model.accept(room);
+        }
+
 
         PeerConnectionClient.getInstance().remoteMediaStreamSubject.subscribe(mediaStream -> {
             Logger.d("remotemediastream received");

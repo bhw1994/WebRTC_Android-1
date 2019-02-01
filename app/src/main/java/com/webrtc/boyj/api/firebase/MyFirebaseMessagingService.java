@@ -6,7 +6,9 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.webrtc.boyj.api.signalling.SignalingClient;
 import com.webrtc.boyj.model.dao.UserDAO;
+import com.webrtc.boyj.view.activity.CallActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -14,8 +16,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     // [START receive_message]
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage) {
-        handleNow();
+    public void onMessageReceived(RemoteMessage remoteMessage)
+    {
+        Log.d("FirebaseLog", "message received");
+        String room=remoteMessage.getData().get("room");
+        handleNow(room);
     }
     // [END receive_message]
 
@@ -28,20 +33,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
     // [END on_new_token]
 
-    private void handleNow() {
-        /*
-        Log.d(TAG, "FCM Message Received");
+    private void handleNow(String room) {
         Intent intent = new Intent(this, CallActivity.class);
-        intent.putExtra("room", "1234");
+        intent.putExtra("caller",false);
+        intent.putExtra("room",room);
         startActivity(intent);
-        */
     }
 
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
-        UserDAO.create("unknown").subscribe(s -> {
-            Log.d(TAG,"sendRegistrationToServer");
-        });
+        UserDAO.create("unknown").subscribe(s -> Log.d(TAG,"sendRegistrationToServer"));
 
     }
 

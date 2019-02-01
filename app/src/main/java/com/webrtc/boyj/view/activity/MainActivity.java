@@ -9,10 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DividerItemDecoration;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.webrtc.boyj.R;
 import com.webrtc.boyj.databinding.ActivityMainBinding;
+import com.webrtc.boyj.model.dao.UserDAO;
 import com.webrtc.boyj.model.dto.User;
 import com.webrtc.boyj.utils.Constants;
 import com.webrtc.boyj.view.adapter.MainAdapter;
@@ -48,7 +50,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     private void moveToCallActivity(User user) {
         Intent intent = new Intent(this, CallActivity.class);
-        intent.putExtra(Constants.EXTRA_USER, user);
+        intent.putExtra("deviceToken",user.getDeviceToken());
+        intent.putExtra("caller",true);
+
         startActivity(intent);
     }
 

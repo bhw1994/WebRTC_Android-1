@@ -4,6 +4,7 @@ public interface SignalingInterface {
     String EVENT_DIAL = "dial";
     String EVENT_CREATED = "created";
     String EVENT_AWAKEN = "awaken";
+    String EVENT_KNOCK = "knock";
     String EVENT_ACCEPT = "accept";
     String EVENT_REJECT = "reject";
 
@@ -18,6 +19,6 @@ public interface SignalingInterface {
     String EVENT_BYE = "bye";
     String EVENT_LOG = "log";
 
-    String EVENT_SERVER_ERROR = "server_error";
+    String EVENT_SERVER_ERROR = "serverError";
     String EVENT_PEER_ERROR = "peer_error";
 }

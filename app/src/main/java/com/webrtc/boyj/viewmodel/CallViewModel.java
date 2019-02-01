@@ -17,6 +17,7 @@ import com.webrtc.boyj.model.dto.User;
 import com.webrtc.boyj.utils.Logger;
 import com.webrtc.boyj.utils.Util;
 
+import org.json.JSONObject;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.SurfaceViewRenderer;
@@ -46,7 +47,7 @@ public class CallViewModel extends BaseViewModel {
 
     }
 
-    public void call(){
+    public void call(String deviceToken){
         PeerConnectionClient peerConnectionClient=PeerConnectionClient.getInstance();
         SignalingClient signalingClient=SignalingClient.getInstance();
 
@@ -75,10 +76,13 @@ public class CallViewModel extends BaseViewModel {
             peerConnectionClient.createPeerConnection();
             peerConnectionClient.createOffer();
         });
+        signalingClient.errorEventSubject.subscribe(jsonObject -> {
+            Logger.signalingEvent(SignalingInterface.EVENT_SERVER_ERROR+" "+jsonObject.toString());
+        });
 
-        signalingClient.emitDial("test");
+        signalingClient.emitDial(deviceToken);
     }
-    public void accept(){
+    public void accept(String room){
         PeerConnectionClient peerConnectionClient=PeerConnectionClient.getInstance();
         SignalingClient signalingClient=SignalingClient.getInstance();
 
@@ -97,17 +101,24 @@ public class CallViewModel extends BaseViewModel {
             peerConnectionClient.createAnswer();
         });
 
-
-
         signalingClient.riceEventSubject.subscribe(jsonObject -> {
             Logger.signalingEvent(SignalingInterface.EVENT_RECEIVE_ICE);
             peerConnectionClient.addIceCandidate(jsonObject);});
+
+        signalingClient.errorEventSubject.subscribe(jsonObject -> {
+            Logger.signalingEvent(SignalingInterface.EVENT_SERVER_ERROR+" "+jsonObject.toString());
+        });
 
         signalingClient.readyEventSubject.subscribe(signalingClient1 -> {
             Logger.signalingEvent(SignalingInterface.EVENT_READY);
         });
 
-        signalingClient.emitDial("test");
+        signalingClient.knockEventSubject.subscribe(s -> {
+            signalingClient.emitAccept();
+            Logger.signalingEvent(SignalingInterface.EVENT_ACCEPT);
+        });
+
+        signalingClient.emitAwaken(room);
     }
 
     public void onHangUp() {

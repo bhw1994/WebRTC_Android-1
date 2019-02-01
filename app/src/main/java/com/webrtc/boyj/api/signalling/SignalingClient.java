@@ -25,8 +25,8 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class SignalingClient {
-    private static final String URL = "https://10.20.7.162:";
-    private static final int PORT = 1794;
+    private static final String URL = "http://13.124.41.104:";
+    private static final int PORT = 3000;
     private static SignalingClient instance;
     private Socket socket;
 
@@ -37,11 +37,12 @@ public class SignalingClient {
     */
 
     public PublishSubject<String> createdEventSubject = PublishSubject.create();
+    public PublishSubject<String> knockEventSubject = PublishSubject.create();
     public PublishSubject<String> readyEventSubject = PublishSubject.create();
     public PublishSubject<JSONObject> rsdpEventSubject = PublishSubject.create();
     public PublishSubject<JSONObject> riceEventSubject = PublishSubject.create();
     public PublishSubject<String> byeEventSubject = PublishSubject.create();
-    public PublishSubject<String> errorEventSubject = PublishSubject.create();
+    public PublishSubject<JSONObject> errorEventSubject = PublishSubject.create();
 
 
 
@@ -68,36 +69,55 @@ public class SignalingClient {
 
     private void initSocket(){
         try {
+            /*
+
+
             SSLContext sslcontext = SSLContext.getInstance("TLS");
             sslcontext.init(null, trustAllCerts, null);
             IO.setDefaultHostnameVerifier((hostname, session) -> true);
             IO.setDefaultSSLContext(sslcontext);
+            */
             socket = IO.socket(URL + PORT);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
         }
         socket.on(SignalingInterface.EVENT_CREATED, args -> createdEventSubject.onNext("created"));
+        socket.on(SignalingInterface.EVENT_KNOCK, args -> knockEventSubject.onNext("knock"));
         socket.on(SignalingInterface.EVENT_READY, args ->readyEventSubject.onNext("ready"));
         socket.on(SignalingInterface.EVENT_RECEIVE_SDP, args ->rsdpEventSubject.onNext((JSONObject) args[0]));
         socket.on(SignalingInterface.EVENT_RECEIVE_ICE, args -> riceEventSubject.onNext((JSONObject)args[0]));
         socket.on(SignalingInterface.EVENT_BYE, args -> byeEventSubject .onNext("bye"));
-        socket.on(SignalingInterface.EVENT_BYE, args -> byeEventSubject .onNext("error"));
+        socket.on(SignalingInterface.EVENT_SERVER_ERROR, args -> byeEventSubject .onNext("error"));
     }
 
     public void emitDial(String deviceToken) {
 
         //socket.emit(SignalingInterface.EVENT_DIAL,deviceToken);
-        socket.emit(SignalingInterface.EVENT_DIAL,"fmF6SxZoCB0:APA91bE9BzUHWI1C8QMLV0Uff0jChJrkN1hAkVAHPfVil4owfzj1fwYJu46B7z4TiOg1Ua8oLZZj3rWjiYbxxG8V7D1UJEg-Jw1GcgEKqwezrAQth7XW1cbn4fdvCjRmoNpuBOu29tqq");
-        Logger.signalingEvent(SignalingInterface.EVENT_DIAL);
+
+        try {
+            JSONObject object = new JSONObject();
+            object.put("deviceToken", deviceToken);
+            socket.emit(SignalingInterface.EVENT_DIAL,object);
+            Logger.signalingEvent(SignalingInterface.EVENT_DIAL);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         //그리고 서버응답대기
     }
     public void emitAwaken(String room){
-        socket.emit(SignalingInterface.EVENT_AWAKEN,room);
-        Logger.signalingEvent(SignalingInterface.EVENT_AWAKEN);
+        try {
+            JSONObject object = new JSONObject();
+            object.put("room", room);
+            socket.emit(SignalingInterface.EVENT_AWAKEN,object);
+            Logger.signalingEvent(SignalingInterface.EVENT_AWAKEN);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+    public void emitAccept(){
+        socket.emit(SignalingInterface.EVENT_ACCEPT);
+        Logger.signalingEvent(SignalingInterface.EVENT_ACCEPT);
     }
     public void emitSice(IceCandidate iceCandidate) {
         try {

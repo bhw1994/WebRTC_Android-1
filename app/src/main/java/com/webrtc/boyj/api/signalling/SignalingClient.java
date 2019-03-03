@@ -37,7 +37,11 @@ public class SignalingClient {
             Logger.e("check server URL");
         }
         attachEventListener();
-        connect();
+        try {
+            connect();
+        } catch (SocketConnectException e) {
+            e.printStackTrace();
+        }
     }
 
     public static SignalingClient getInstance() {
@@ -45,7 +49,12 @@ public class SignalingClient {
             synchronized (SignalingClient.class) {
                 if (instance == null) {
                     instance = new SignalingClient();
-                    instance.connect();
+
+                    try {
+                        instance.connect();
+                    } catch (SocketConnectException e) {
+                        Logger.e("Fail Socket connect.");
+                    }
                 }
             }
         return instance;
@@ -62,11 +71,20 @@ public class SignalingClient {
         socket.on(SignalingInterface.EVENT_SERVER_ERROR, args -> byeEventSubject.onNext("error"));
     }
 
-    private void connect() {
+    private void connect() throws SocketConnectException {
         if (!isConnected) {
             socket.connect();
-            isConnected = true;
+
+            if (socket.connected()) {
+                isConnected = true;
+            } else {
+                isConnected = false;
+                throw new SocketConnectException("connect exception");
+            }
+
         }
     }
 
+    public void emitDial() {
+    }
 }

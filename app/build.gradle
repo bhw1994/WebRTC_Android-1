@@ -81,7 +81,8 @@ dependencies {
     // Lottie
     implementation "com.airbnb.android:lottie:$lottie_version"
 
-    //WebRtc
-    implementation "org.webrtc:google-webrtc:$webrtc_version"
+    //webrtc
+    //implementation "org.webrtc:google-webrtc:1.0.25821"
+    implementation 'org.webrtc:google-webrtc:1.0.+'
 }
 apply plugin: 'com.google.gms.google-services'

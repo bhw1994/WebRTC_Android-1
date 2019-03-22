@@ -21,30 +21,36 @@ import java.util.List;
 public class PeerConnectionFactoryManager {
 
     @NonNull
-    private final PeerConnectionFactory factory;
-    @NonNull
-    private final PeerConnection.RTCConfiguration rtcConfiguration;
-    @NonNull
     private final static List<PeerConnection.IceServer> iceServers = new ArrayList<>();
+    @NonNull
+    private final static PeerConnectionFactory factory;
+    @NonNull
+    private final static PeerConnection.RTCConfiguration rtcConfiguration;
 
-    public PeerConnectionFactoryManager() {
+    static {
         PeerConnectionFactory.initialize(PeerConnectionFactory.InitializationOptions.builder(App.getContext()).createInitializationOptions());
+
         final PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
         final DefaultVideoEncoderFactory defaultVideoEncoderFactory = new DefaultVideoEncoderFactory(EglBaseManager.getEglBase().getEglBaseContext(), true, true);
         final DefaultVideoDecoderFactory defaultVideoDecoderFactory = new DefaultVideoDecoderFactory(EglBaseManager.getEglBase().getEglBaseContext());
 
-        this.factory = PeerConnectionFactory.builder()
+        factory = PeerConnectionFactory.builder()
                 .setOptions(options)
                 .setVideoEncoderFactory(defaultVideoEncoderFactory)
                 .setVideoDecoderFactory(defaultVideoDecoderFactory)
                 .createPeerConnectionFactory();
 
-        this.rtcConfiguration = new PeerConnection.RTCConfiguration(iceServers);
+
+        rtcConfiguration = new PeerConnection.RTCConfiguration(iceServers);
         rtcConfiguration.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.DISABLED;
         rtcConfiguration.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
         rtcConfiguration.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.REQUIRE;
         rtcConfiguration.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
         rtcConfiguration.keyType = PeerConnection.KeyType.ECDSA;
+
+    }
+
+    public PeerConnectionFactoryManager() {
     }
 
 
@@ -57,18 +63,19 @@ public class PeerConnectionFactoryManager {
 
     @NonNull
     public VideoTrack createVideoTrack() {
-        final VideoSource videoSource =factory.createVideoSource(true);
+        final VideoSource videoSource = factory.createVideoSource(true);
         final VideoTrack videoTrack = factory.createVideoTrack("VideoTrack", videoSource);
         return videoTrack;
     }
 
     @NonNull
     public PeerConnection createPeerConnection(PeerConnection.Observer peerConnectionObserver) {
-        final PeerConnection peer = factory.createPeerConnection(rtcConfiguration,peerConnectionObserver);
+        final PeerConnection peer = factory.createPeerConnection(rtcConfiguration, peerConnectionObserver);
         return peer;
 
     }
-    public void dispose(){
+
+    public void dispose() {
         factory.dispose();
     }
 

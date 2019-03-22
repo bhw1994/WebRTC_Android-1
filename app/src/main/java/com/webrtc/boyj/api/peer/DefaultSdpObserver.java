@@ -10,16 +10,13 @@ public abstract class DefaultSdpObserver implements SdpObserver {
 
     @Override
     public void onSetSuccess() {
-
     }
 
     @Override
     public void onCreateFailure(String s) {
-
     }
 
     @Override
     public void onSetFailure(String s) {
-
     }
 }

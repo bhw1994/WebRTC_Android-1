@@ -6,12 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.webrtc.boyj.api.signalling.SignalingClient;
-import com.webrtc.boyj.api.signalling.SignalingClientFactory;
 import com.webrtc.boyj.api.signalling.SocketConnectionFailedException;
 import com.webrtc.boyj.api.signalling.payload.DialPayload;
 import com.webrtc.boyj.data.model.User;
 import com.webrtc.boyj.presentation.BaseViewModel;
-import com.webrtc.boyj.presentation.main.MainActivity;
 
 import java.util.concurrent.TimeUnit;
 

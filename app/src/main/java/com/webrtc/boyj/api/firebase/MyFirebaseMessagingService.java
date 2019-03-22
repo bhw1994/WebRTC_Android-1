@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.webrtc.boyj.api.signalling.SignalingClient;
-import com.webrtc.boyj.api.signalling.SignalingClientFactory;
 import com.webrtc.boyj.api.signalling.payload.AwakenPayload;
 import com.webrtc.boyj.api.signalling.payload.FCMPayload;
 import com.webrtc.boyj.data.repository.UserRepositoryImpl;
@@ -38,9 +37,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     public void handleNow(@NonNull final FCMPayload payload) {
         final String room = payload.getRoom();
-        final SignalingClient signalingClient = SignalingClientFactory.getSignalingClient();
+        SignalingClient signalingClient = new SignalingClient();
         final AwakenPayload awakenPayload = new AwakenPayload.Builder(room).build();
-
         signalingClient.emitAwaken(awakenPayload);
     }
 }

@@ -1,6 +1,5 @@
 package com.webrtc.boyj.api.peer.manager;
 
-import com.webrtc.boyj.api.peer.PeerConnectionClient;
 import com.webrtc.boyj.utils.Logger;
 
 import org.webrtc.AudioTrack;

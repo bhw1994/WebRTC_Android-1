@@ -4,15 +4,25 @@ package com.webrtc.boyj.api.signalling;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.webrtc.boyj.BuildConfig;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class SocketIOClient {
 
     @NonNull
-    final private Socket socket;
+    private static final Socket socket;
 
-    public SocketIOClient(@NonNull final Socket socket) {
-        this.socket = socket;
+    static {
+        try {
+            socket = IO.socket(BuildConfig.SERVER_URL);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 
     public void connect() {
@@ -22,12 +32,7 @@ public class SocketIOClient {
         }
     }
 
-    @NonNull
-    public void emit(@NonNull final String event , @Nullable final Object object){
-        socket.emit(event , object);
-    }
-    @NonNull
-    public Socket getSocket() {
-        return socket;
+    public void emit(@NonNull final String event, @Nullable final Object... args) {
+        socket.emit(event, args);
     }
 }

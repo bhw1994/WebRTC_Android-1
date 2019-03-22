@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SignalingClient.class, SignalingClientFactory.class})
+@PrepareForTest({SignalingClient.class})
 public class SignalingClientTest {
 
     @Test

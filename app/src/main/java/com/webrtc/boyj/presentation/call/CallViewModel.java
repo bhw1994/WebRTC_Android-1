@@ -9,6 +9,8 @@ import com.webrtc.boyj.api.signalling.payload.DialPayload;
 import com.webrtc.boyj.data.model.User;
 import com.webrtc.boyj.presentation.BaseViewModel;
 
+import org.webrtc.MediaStream;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
@@ -23,6 +25,10 @@ public class CallViewModel extends BaseViewModel {
     private final ObservableInt callTime = new ObservableInt(0);
 
     @NonNull
+    private final MediaStream localMediaStream;
+
+
+    @NonNull
     private final BoyjRTC boyjRTC;
 
     public CallViewModel(@NonNull User otherUser) {
@@ -30,6 +36,8 @@ public class CallViewModel extends BaseViewModel {
         this.otherUser = otherUser;
 
         boyjRTC = new BoyjRTC();
+        localMediaStream = boyjRTC.getUserMedia();
+        boyjRTC.startCapture();
     }
 
     //전화 거는 요청

@@ -2,18 +2,26 @@ package com.webrtc.boyj.api;
 
 import android.support.annotation.NonNull;
 
+import com.webrtc.boyj.api.peer.PeerConnectionClient;
+import com.webrtc.boyj.api.peer.manager.UserMediaManager;
 import com.webrtc.boyj.api.signalling.SignalingClient;
 import com.webrtc.boyj.api.signalling.payload.AwakenPayload;
 import com.webrtc.boyj.api.signalling.payload.DialPayload;
+
+import org.webrtc.MediaStream;
 
 import io.reactivex.subjects.CompletableSubject;
 
 public class BoyjRTC {
     @NonNull
     private final static SignalingClient signalingClient;
+    private final static PeerConnectionClient peerConnectionClient;
+    private final static UserMediaManager userMediaManager;
 
     static {
         signalingClient = new SignalingClient();
+        peerConnectionClient = new PeerConnectionClient();
+        userMediaManager = new UserMediaManager();
     }
 
     public BoyjRTC() {
@@ -44,5 +52,24 @@ public class BoyjRTC {
     @NonNull
     public CompletableSubject knock() {
         return signalingClient.getKnockSubject();
+    }
+
+    @NonNull
+    public MediaStream getUserMedia() {
+        return userMediaManager.getUserMedia();
+    }
+
+    public void startCapture() {
+        userMediaManager.startCapture();
+    }
+
+    public void stopCapture() {
+        userMediaManager.stopCapture();
+    }
+
+    public void release() {
+        signalingClient.disconnect();
+        peerConnectionClient.release();
+        userMediaManager.stopCapture();
     }
 }

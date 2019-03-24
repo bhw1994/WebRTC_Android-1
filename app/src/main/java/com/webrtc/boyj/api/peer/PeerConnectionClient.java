@@ -52,7 +52,7 @@ public class PeerConnectionClient {
     }
 
     @NonNull
-    private BoyjPeerConnection boyjPeerConnection;
+    private PeerConnection peerConnection;
     @NonNull
     private PublishSubject<SessionDescription> sdpSubject = PublishSubject.create();
     @NonNull
@@ -61,11 +61,29 @@ public class PeerConnectionClient {
     private PublishSubject<MediaStream> remoteMediaStreamSubject = PublishSubject.create();
 
     public void createPeerConnection(boolean isCaller) {
-        final PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfiguration, new PeerConnectionObserver());
-        boyjPeerConnection = new BoyjPeerConnection(peerConnection);
+        final PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfiguration, new BoyjPeerConnectionObserver() {
+            @Override
+            public void onIceCandidate(IceCandidate iceCandidate) {
+                super.onIceCandidate(iceCandidate);
+                iceCandidateSubject.onNext(iceCandidate);
+            }
+
+            @Override
+            public void onAddStream(MediaStream mediaStream) {
+                super.onAddStream(mediaStream);
+                remoteMediaStreamSubject.onNext(mediaStream);
+            }
+        });
 
         if (isCaller) {
-            boyjPeerConnection.createOffer();
+            peerConnection.createOffer(new BoyjSdpObserver() {
+                @Override
+                public void onCreateSuccess(SessionDescription sessionDescription) {
+                    super.onCreateSuccess(sessionDescription);
+                    peerConnection.setRemoteDescription(null, sessionDescription);
+                    sdpSubject.onNext(sessionDescription);
+                }
+            }, constraints);
         }
     }
 
@@ -74,7 +92,7 @@ public class PeerConnectionClient {
     }
 
     public void release() {
-        boyjPeerConnection.dispose();
+        peerConnection.dispose();
         peerConnectionFactory.dispose();
     }
 
@@ -88,55 +106,5 @@ public class PeerConnectionClient {
 
     public PublishSubject<MediaStream> getRemoteMediaStreamSubject() {
         return remoteMediaStreamSubject;
-    }
-
-
-    private class BoyjPeerConnection {
-        @NonNull
-        final private PeerConnection peer;
-
-        public BoyjPeerConnection(PeerConnection peer) {
-            this.peer = peer;
-        }
-
-        private void createOffer() {
-            peer.createOffer(new LocalSdpObserver(), constraints);
-        }
-
-        private void createAnswer() {
-            peer.createAnswer(new LocalSdpObserver(), constraints);
-        }
-
-        public void setRemoteDescription(SessionDescription sdp) {
-            peer.setRemoteDescription(null, sdp);
-        }
-
-        public void addIceCandidate(IceCandidate iceCandidate) {
-            peer.addIceCandidate(iceCandidate);
-        }
-
-        public void dispose() {
-            peer.dispose();
-        }
-    }
-
-    private class PeerConnectionObserver extends DefaultPeerConnectionObserver {
-        @Override
-        public void onIceCandidate(IceCandidate iceCandidate) {
-            iceCandidateSubject.onNext(iceCandidate);
-        }
-
-        @Override
-        public void onAddStream(MediaStream mediaStream) {
-            remoteMediaStreamSubject.onNext(mediaStream);
-        }
-    }
-
-    private class LocalSdpObserver extends DefaultSdpObserver {
-        @Override
-        public void onCreateSuccess(SessionDescription sessionDescription) {
-            boyjPeerConnection.setRemoteDescription(sessionDescription);
-            sdpSubject.onNext(sessionDescription);
-        }
     }
 }

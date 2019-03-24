@@ -7,12 +7,15 @@ import org.webrtc.PeerConnection;
 import org.webrtc.RtpReceiver;
 
 
-public abstract class DefaultPeerConnectionObserver implements PeerConnection.Observer {
-    @Override
-    public abstract void onIceCandidate(IceCandidate iceCandidate);
+public class BoyjPeerConnectionObserver implements PeerConnection.Observer {
 
     @Override
-    public abstract void onAddStream(MediaStream mediaStream);
+    public void onIceCandidate(IceCandidate iceCandidate) {
+    }
+
+    @Override
+    public void onAddStream(MediaStream mediaStream) {
+    }
 
     @Override
     public void onSignalingChange(PeerConnection.SignalingState signalingState) {

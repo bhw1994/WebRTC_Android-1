@@ -3,10 +3,10 @@ package com.webrtc.boyj.api.peer;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 
-public abstract class DefaultSdpObserver implements SdpObserver {
-
+public class BoyjSdpObserver implements SdpObserver {
     @Override
-    public abstract void onCreateSuccess(SessionDescription sessionDescription);
+    public void onCreateSuccess(SessionDescription sessionDescription) {
+    }
 
     @Override
     public void onSetSuccess() {

@@ -8,6 +8,11 @@ import android.support.v7.recyclerview.extensions.ListAdapter;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
+import com.webrtc.boyj.extension.custom.BoyjSurfaceView;
+
+import org.webrtc.MediaStream;
+import org.webrtc.VideoTrack;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,6 +44,15 @@ public class BindingAdapters {
             int min = time / 60;
             int sec = time % 60;
             textView.setText(String.format("%02d:%02d", min, sec));
+        }
+    }
+
+    @BindingAdapter({"mediaStream"})
+    public static void setMediaStream(@NonNull final BoyjSurfaceView surfaceView,
+                                      @Nullable final MediaStream mediaStream) {
+        if (mediaStream != null) {
+            final VideoTrack track = mediaStream.videoTracks.get(0);
+            track.addSink(surfaceView);
         }
     }
 }

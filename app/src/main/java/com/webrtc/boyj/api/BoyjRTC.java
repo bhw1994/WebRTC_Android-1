@@ -45,4 +45,9 @@ public class BoyjRTC {
     public CompletableSubject knock() {
         return signalingClient.getKnockSubject();
     }
+
+    @NonNull
+    public CompletableSubject ready() {
+        return signalingClient.getReadySubject();
+    }
 }

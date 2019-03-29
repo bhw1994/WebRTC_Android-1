@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.webrtc.boyj.api.BoyjRTC;
 import com.webrtc.boyj.api.signalling.payload.DialPayload;
-import com.webrtc.boyj.data.model.User;
 import com.webrtc.boyj.presentation.BaseViewModel;
 
 import java.util.concurrent.TimeUnit;
@@ -16,26 +15,31 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class CallViewModel extends BaseViewModel {
     @NonNull
-    private final User otherUser;
+    private final String tel;
     @NonNull
     private final ObservableBoolean isCalling = new ObservableBoolean(false);
     @NonNull
     private final ObservableInt callTime = new ObservableInt(0);
-
     @NonNull
     private final BoyjRTC boyjRTC;
 
-    public CallViewModel(@NonNull User otherUser) {
-
-        this.otherUser = otherUser;
-
+    CallViewModel(@NonNull final String tel) {
+        this.tel = tel;
         boyjRTC = new BoyjRTC();
+
+        addDisposable(boyjRTC.ready()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this::call));
     }
 
     //전화 거는 요청
-    public void dial() {
-        DialPayload dialPayload = new DialPayload.Builder(otherUser.getDeviceToken()).build();
+    void dial(@NonNull final String room) {
+        final DialPayload dialPayload = new DialPayload.Builder(room).build();
         boyjRTC.dial(dialPayload);
+    }
+
+    void join() {
+        boyjRTC.accept();
     }
 
     //전화 연결 되었을때 작업
@@ -53,8 +57,8 @@ public class CallViewModel extends BaseViewModel {
     }
 
     @NonNull
-    public User getOtherUser() {
-        return otherUser;
+    public String getTel() {
+        return tel;
     }
 
     @NonNull

@@ -8,36 +8,31 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintSet;
 import android.transition.TransitionManager;
-import android.widget.Toast;
 
 import com.webrtc.boyj.R;
-import com.webrtc.boyj.data.model.User;
 import com.webrtc.boyj.databinding.ActivityCallBinding;
 import com.webrtc.boyj.presentation.BaseActivity;
 
 public class CallActivity extends BaseActivity<ActivityCallBinding> {
-    private static final String EXTRA_USER = "EXTRA_USER";
-    private static final String EXTRA_OTHER_USER = "EXTRA_OTHER_USER";
+    private static final String EXTRA_TEL = "EXTRA_TEL";
+    private static final String EXTRA_ROOM = "EXTRA_ROOM";
     private static final String EXTRA_IS_CALLER = "EXTRA_IS_CALLER";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        final Intent intent = getIntent();
-
-        final User user = (User) intent.getSerializableExtra(EXTRA_USER);
-        final User otherUser = (User) intent.getSerializableExtra(EXTRA_OTHER_USER);
-        final boolean isCaller = intent.getBooleanExtra(EXTRA_IS_CALLER, true);
+        final String tel = getIntent().getStringExtra(EXTRA_TEL);
+        final String room = getIntent().getStringExtra(EXTRA_ROOM);
+        final boolean isCaller = getIntent().getBooleanExtra(EXTRA_IS_CALLER, true);
 
         initViews();
-        initViewModel(otherUser);
+        initViewModel(tel);
 
-        // Todo : Handle "Caller" and "Callee" by next issue
         if (isCaller) {
-
+            binding.getVm().dial(room);
         } else {
-
+            binding.getVm().join();
         }
     }
 
@@ -46,10 +41,9 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
         findViewById(R.id.fab_left).setOnClickListener(__ -> call());
     }
 
-    private void initViewModel(@NonNull final User otherUser) {
+    private void initViewModel(@NonNull final String tel) {
         final CallViewModel vm = ViewModelProviders.of(this,
-                new CallViewModelFactory(otherUser)).get(CallViewModel.class);
-
+                new CallViewModelFactory(tel)).get(CallViewModel.class);
         binding.setVm(vm);
     }
 
@@ -71,18 +65,14 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
         finish();
     }
 
-    private void showToast(@NonNull final String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-    }
-
     @NonNull
     public static Intent getLaunchIntent(@NonNull final Context context,
-                                         @NonNull final User otherUser,
-                                         @Nullable final User user,
+                                         @NonNull final String tel,
+                                         @NonNull final String room,
                                          final boolean isCaller) {
         return getLaunchIntent(context, CallActivity.class)
-                .putExtra(EXTRA_OTHER_USER, otherUser)
-                .putExtra(EXTRA_USER, user)
+                .putExtra(EXTRA_TEL, tel)
+                .putExtra(EXTRA_ROOM, room)
                 .putExtra(EXTRA_IS_CALLER, isCaller);
     }
 

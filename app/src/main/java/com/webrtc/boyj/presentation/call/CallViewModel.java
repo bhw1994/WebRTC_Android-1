@@ -26,17 +26,22 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     private final BoyjRTC boyjRTC;
     @NonNull
-    private final MutableLiveData<MediaStream> mediaStream = new MutableLiveData<>();
+    private final MutableLiveData<MediaStream> localMediaStream = new MutableLiveData<>();
+    @NonNull
+    private final MutableLiveData<MediaStream> remoteMediaStream = new MutableLiveData<>();
 
     CallViewModel(@NonNull final String tel) {
         this.tel = tel;
         boyjRTC = new BoyjRTC();
 
+        localMediaStream.setValue(boyjRTC.getUserMedia());
+        boyjRTC.startCapture();
+
         addDisposable(boyjRTC.remoteMediaStream()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mediaStream -> {
                     call();
-                    this.mediaStream.setValue(mediaStream);
+                    this.remoteMediaStream.setValue(mediaStream);
                 }));
     }
 
@@ -72,8 +77,8 @@ public class CallViewModel extends BaseViewModel {
     }
 
     @NonNull
-    public MutableLiveData<MediaStream> getMediaStream() {
-        return mediaStream;
+    public MutableLiveData<MediaStream> getRemoteMediaStream() {
+        return remoteMediaStream;
     }
 
     @NonNull

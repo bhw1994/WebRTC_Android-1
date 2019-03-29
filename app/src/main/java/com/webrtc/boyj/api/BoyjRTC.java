@@ -82,6 +82,7 @@ public class BoyjRTC {
         compositeDisposable.add(signalingClient.getReadySubject().subscribe(() -> {
             initRTC();
             peerConnectionClient.createPeerConnection();
+            peerConnectionClient.addStreamToLocalPeer(getUserMedia());
         }));
     }
 
@@ -90,6 +91,7 @@ public class BoyjRTC {
                 signalingClient.getReadySubject().subscribe(() -> {
                     initRTC();
                     peerConnectionClient.createPeerConnection();
+                    peerConnectionClient.addStreamToLocalPeer(getUserMedia());
                     peerConnectionClient.createOffer();
                 }));
     }

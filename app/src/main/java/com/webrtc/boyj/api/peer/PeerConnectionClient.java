@@ -29,15 +29,12 @@ public class PeerConnectionClient {
     private static final List<String> turnServerUrls = new ArrayList<>();
     @NonNull
     private static final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
-
     @NonNull
     private static PeerConnection.RTCConfiguration rtcConfiguration;
     @NonNull
     private static final PeerConnection.RTCConfiguration defaultRtcConfiguration = new PeerConnection.RTCConfiguration(iceServers);
-
     @NonNull
     private static final MediaConstraints constraints = new MediaConstraints();
-
     @NonNull
     private static final PeerConnectionFactory peerConnectionFactory;
 
@@ -84,6 +81,7 @@ public class PeerConnectionClient {
         peerConnectionFactory = PeerConnectionFactoryManager.getPeerConnectionFactory();
     }
 
+    @SuppressWarnings("NullableProblems")
     @NonNull
     private PeerConnection peerConnection;
     @NonNull
@@ -95,6 +93,8 @@ public class PeerConnectionClient {
 
     public void createPeerConnection() {
         final PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfiguration, new BoyjPeerConnectionObserver());
+        assert peerConnection != null;
+        this.peerConnection = peerConnection;
     }
 
     public void createOffer() {
@@ -114,27 +114,34 @@ public class PeerConnectionClient {
         peerConnection.addIceCandidate(iceCandidate);
     }
 
+    // Todo : 이후 Configuration 변경 대비
     public void setRtcConfiguration(PeerConnection.RTCConfiguration rtcConfiguration) {
-        this.rtcConfiguration = rtcConfiguration;
+        PeerConnectionClient.rtcConfiguration = rtcConfiguration;
+    }
+
+    public void addStreamToLocalPeer(@NonNull final MediaStream userMedia) {
+        peerConnection.addStream(userMedia);
+    }
+
+    @NonNull
+    public PublishSubject<SessionDescription> getSdpSubject() {
+        return sdpSubject;
+    }
+
+    @NonNull
+    public PublishSubject<IceCandidate> getIceCandidateSubject() {
+        return iceCandidateSubject;
+    }
+
+    @NonNull
+    public PublishSubject<MediaStream> getRemoteMediaStreamSubject() {
+        return remoteMediaStreamSubject;
     }
 
     public void release() {
         peerConnection.dispose();
         peerConnectionFactory.dispose();
     }
-
-    public PublishSubject<SessionDescription> getSdpSubject() {
-        return sdpSubject;
-    }
-
-    public PublishSubject<IceCandidate> getIceCandidateSubject() {
-        return iceCandidateSubject;
-    }
-
-    public PublishSubject<MediaStream> getRemoteMediaStreamSubject() {
-        return remoteMediaStreamSubject;
-    }
-
 
     private class BoyjPeerConnectionObserver implements PeerConnection.Observer {
 

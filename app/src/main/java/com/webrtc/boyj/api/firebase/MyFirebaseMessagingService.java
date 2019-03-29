@@ -16,16 +16,13 @@ import com.webrtc.boyj.utils.Logger;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
-    @NonNull
-    private static final String TAG = "BOYJ_MyFCMService";
-
     @Override
     public void onMessageReceived(@NonNull final RemoteMessage remoteMessage) {
         Logger.d("FCM received");
 
         final FCMPayload payload = new FCMPayload(remoteMessage);
-
         final BoyjRTC boyjRTC = new BoyjRTC();
+
         boyjRTC.knock().subscribe(() -> {
             final Intent intent = RingingActivity.getLaunchIntent(getApplicationContext(), payload);
             startActivity(intent);
@@ -44,5 +41,4 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .putBoolean(UserRepositoryImpl.CHANGED, true)
                 .apply();
     }
-
 }

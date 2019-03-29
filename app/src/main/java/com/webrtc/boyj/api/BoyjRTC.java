@@ -105,8 +105,6 @@ public class BoyjRTC {
         signalingClient.disconnect();
     }
 
-
-
     public void awaken(@NonNull final AwakenPayload payload) {
         signalingClient.emitAwaken(payload);
     }

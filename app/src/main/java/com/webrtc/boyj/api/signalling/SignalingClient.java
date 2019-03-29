@@ -26,19 +26,17 @@ public class SignalingClient {
 
     private CompletableSubject knockSubject = CompletableSubject.create();
     private CompletableSubject readySubject = CompletableSubject.create();
+    private PublishSubject<IceCandidate> iceCandidateSubject = PublishSubject.create();
+    private PublishSubject<SessionDescription> sdpSubject = PublishSubject.create();
 
 
-    public PublishSubject<IceCandidatePayload> getIceCandidatePayloadPublishSubject() {
-        return iceCandidatePayloadPublishSubject;
+    public PublishSubject<IceCandidate> getIceCandidateSubject() {
+        return iceCandidateSubject;
     }
 
-    public PublishSubject<SdpPayload> getSdpPayloadPublishSubject() {
-        return sdpPayloadPublishSubject;
+    public PublishSubject<SessionDescription> getSdpSubject() {
+        return sdpSubject;
     }
-
-    private PublishSubject<IceCandidatePayload> iceCandidatePayloadPublishSubject= PublishSubject.create();
-    private PublishSubject<SdpPayload> sdpPayloadPublishSubject= PublishSubject.create();
-
 
     public SignalingClient() {
         Gson gson = new Gson();
@@ -48,13 +46,11 @@ public class SignalingClient {
 
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_SDP, args -> {
             SessionDescription sdp = SdpPayload.fromJson((String) args[0]);
-            SdpPayload sdpPayload = new SdpPayload.Builder(sdp).build();
-            sdpPayloadPublishSubject.onNext(sdpPayload);
+            sdpSubject.onNext(sdp);
         });
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_ICE, args -> {
             IceCandidate iceCandidate = IceCandidatePayload.fromJson((String) args[0]);
-            IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
-            iceCandidatePayloadPublishSubject.onNext(iceCandidatePayload);
+            iceCandidateSubject.onNext(iceCandidate);
         });
         socketIOClient.connect();
     }

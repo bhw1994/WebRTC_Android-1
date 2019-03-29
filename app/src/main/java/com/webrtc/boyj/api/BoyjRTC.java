@@ -10,9 +10,10 @@ import com.webrtc.boyj.api.signalling.payload.DialPayload;
 import com.webrtc.boyj.api.signalling.payload.IceCandidatePayload;
 import com.webrtc.boyj.api.signalling.payload.SdpPayload;
 
-import org.webrtc.IceCandidate;
 import org.webrtc.MediaStream;
+import org.webrtc.SessionDescription;
 
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.CompletableSubject;
 import io.reactivex.subjects.PublishSubject;
 
@@ -23,6 +24,8 @@ public class BoyjRTC {
     private final static PeerConnectionClient peerConnectionClient;
     @NonNull
     private final static UserMediaManager userMediaManager;
+    @NonNull
+    private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     static {
         signalingClient = new SignalingClient();
@@ -37,6 +40,7 @@ public class BoyjRTC {
         signalingClient.disconnect();
         peerConnectionClient.release();
         userMediaManager.stopCapture();
+        compositeDisposable.dispose();
     }
 
     public void startCapture() {
@@ -52,38 +56,42 @@ public class BoyjRTC {
         return userMediaManager.getUserMedia();
     }
 
-    public void attachEvent() {
-        peerConnectionClient.getSdpSubject().subscribe(sessionDescription -> {
-            SdpPayload sdpPayload = new SdpPayload.Builder(sessionDescription).build();
-            signalingClient.emitSdp(sdpPayload);
-        });
-        peerConnectionClient.getIceCandidateSubject().subscribe(iceCandidate -> {
-            IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
-            signalingClient.emitIceCandidate(iceCandidatePayload);
-        });
-
-        peerConnectionClient.getRemoteMediaStreamSubject().subscribe(mediaStream -> {
-        });
-
-        signalingClient.getSdpPayloadPublishSubject().subscribe(sdpPayload -> {
-
-        });
-        signalingClient.getIceCandidatePayloadPublishSubject().subscribe(iceCandidatePayload -> {
-
-        });
+    private void initRTC() {
+        compositeDisposable.addAll(
+                peerConnectionClient.getSdpSubject().subscribe(sessionDescription -> {
+                    final SdpPayload sdpPayload = new SdpPayload.Builder(sessionDescription).build();
+                    signalingClient.emitSdp(sdpPayload);
+                }),
+                peerConnectionClient.getIceCandidateSubject().subscribe(iceCandidate -> {
+                    IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
+                    signalingClient.emitIceCandidate(iceCandidatePayload);
+                }),
+                peerConnectionClient.getRemoteMediaStreamSubject().subscribe(mediaStream -> {
+                }),
+                signalingClient.getSdpSubject().subscribe(sdp -> {
+                    peerConnectionClient.setRemoteSdp(sdp);
+                    if (sdp.type == SessionDescription.Type.OFFER) {
+                        peerConnectionClient.createAnswer();
+                    }
+                }),
+                signalingClient.getIceCandidateSubject().subscribe(peerConnectionClient::addIceCandidate)
+        );
     }
 
     public void attachCalleeListener() {
-        signalingClient.getReadySubject().subscribe(() -> {
+        compositeDisposable.add(signalingClient.getReadySubject().subscribe(() -> {
+            initRTC();
             peerConnectionClient.createPeerConnection();
-        });
+        }));
     }
 
     public void attachCallerListener() {
-        signalingClient.getReadySubject().subscribe(() -> {
-            peerConnectionClient.createPeerConnection();
-            peerConnectionClient.createOffer();
-        });
+        compositeDisposable.add(
+                signalingClient.getReadySubject().subscribe(() -> {
+                    initRTC();
+                    peerConnectionClient.createPeerConnection();
+                    peerConnectionClient.createOffer();
+                }));
     }
 
     //앱 유저로 부터 온 이벤트 처리

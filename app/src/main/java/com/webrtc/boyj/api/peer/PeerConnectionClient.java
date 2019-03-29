@@ -67,11 +67,6 @@ public class PeerConnectionClient {
             );
         }
 
-
-
-
-
-
         /*
         RTC Configuration:
             https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
@@ -104,6 +99,19 @@ public class PeerConnectionClient {
 
     public void createOffer() {
         peerConnection.createOffer(new BoyjSdpObserver(), constraints);
+    }
+
+    public void createAnswer() {
+        peerConnection.createAnswer(new BoyjSdpObserver(), constraints);
+    }
+
+    public void setRemoteSdp(SessionDescription sdp) {
+        peerConnection.setRemoteDescription(null, sdp);
+
+    }
+
+    public void addIceCandidate(IceCandidate iceCandidate) {
+        peerConnection.addIceCandidate(iceCandidate);
     }
 
     public void setRtcConfiguration(PeerConnection.RTCConfiguration rtcConfiguration) {

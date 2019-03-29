@@ -1,5 +1,6 @@
 package com.webrtc.boyj.presentation.call;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
@@ -7,6 +8,8 @@ import android.support.annotation.NonNull;
 import com.webrtc.boyj.api.BoyjRTC;
 import com.webrtc.boyj.api.signalling.payload.DialPayload;
 import com.webrtc.boyj.presentation.BaseViewModel;
+
+import org.webrtc.MediaStream;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,23 +25,30 @@ public class CallViewModel extends BaseViewModel {
     private final ObservableInt callTime = new ObservableInt(0);
     @NonNull
     private final BoyjRTC boyjRTC;
+    @NonNull
+    private final MutableLiveData<MediaStream> mediaStream = new MutableLiveData<>();
 
     CallViewModel(@NonNull final String tel) {
         this.tel = tel;
         boyjRTC = new BoyjRTC();
 
-        addDisposable(boyjRTC.ready()
+        addDisposable(boyjRTC.remoteMediaStream()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::call));
+                .subscribe(mediaStream -> {
+                    call();
+                    this.mediaStream.setValue(mediaStream);
+                }));
     }
 
     //전화 거는 요청
     void dial(@NonNull final String room) {
+        boyjRTC.attachCallerListener();
         final DialPayload dialPayload = new DialPayload.Builder(room).build();
         boyjRTC.dial(dialPayload);
     }
 
     void join() {
+        boyjRTC.attachCalleeListener();
         boyjRTC.accept();
     }
 
@@ -59,6 +69,11 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     public String getTel() {
         return tel;
+    }
+
+    @NonNull
+    public MutableLiveData<MediaStream> getMediaStream() {
+        return mediaStream;
     }
 
     @NonNull

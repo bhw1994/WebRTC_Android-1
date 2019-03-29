@@ -3,6 +3,7 @@ package com.webrtc.boyj.api.peer;
 import android.support.annotation.NonNull;
 
 import com.webrtc.boyj.api.peer.manager.PeerConnectionFactoryManager;
+import com.webrtc.boyj.utils.Logger;
 
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
@@ -32,12 +33,11 @@ public class PeerConnectionClient {
     @NonNull
     private static PeerConnection.RTCConfiguration rtcConfiguration;
     @NonNull
-    private static final PeerConnection.RTCConfiguration defaultRtcConfiguration = new PeerConnection.RTCConfiguration(iceServers);
+    private static PeerConnection.RTCConfiguration defaultRtcConfiguration;
     @NonNull
     private static final MediaConstraints constraints = new MediaConstraints();
     @NonNull
     private static final PeerConnectionFactory peerConnectionFactory;
-
 
     static {
         stunServerUrls.add("stun:tk-turn1.xirsys.com");
@@ -63,6 +63,8 @@ public class PeerConnectionClient {
 
             );
         }
+
+        defaultRtcConfiguration = new PeerConnection.RTCConfiguration(iceServers);
 
         /*
         RTC Configuration:
@@ -106,6 +108,7 @@ public class PeerConnectionClient {
     }
 
     public void setRemoteSdp(SessionDescription sdp) {
+        Logger.d(sdp.type.canonicalForm());
         peerConnection.setRemoteDescription(new CustomSdpObserver("SDP"), sdp);
     }
 
@@ -166,6 +169,7 @@ public class PeerConnectionClient {
 
         @Override
         public void onIceCandidate(IceCandidate iceCandidate) {
+            Logger.d("onIceCandidate : " + iceCandidate.toString());
             iceCandidateSubject.onNext(iceCandidate);
         }
 
@@ -176,6 +180,7 @@ public class PeerConnectionClient {
 
         @Override
         public void onAddStream(MediaStream mediaStream) {
+            Logger.d("onAddStream()");
             remoteMediaStreamSubject.onNext(mediaStream);
         }
 
@@ -204,7 +209,7 @@ public class PeerConnectionClient {
 
         @Override
         public void onCreateSuccess(SessionDescription sessionDescription) {
-            peerConnection.setRemoteDescription(new CustomSdpObserver("AAA"), sessionDescription);
+            peerConnection.setLocalDescription(new CustomSdpObserver("AAA"), sessionDescription);
             sdpSubject.onNext(sessionDescription);
         }
 

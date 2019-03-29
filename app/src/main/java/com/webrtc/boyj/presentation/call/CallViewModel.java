@@ -1,7 +1,6 @@
 package com.webrtc.boyj.presentation.call;
 
 import android.arch.lifecycle.MutableLiveData;
-import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 
@@ -20,7 +19,7 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     private final String tel;
     @NonNull
-    private final ObservableBoolean isCalling = new ObservableBoolean(false);
+    private final MutableLiveData<Boolean> isCalling = new MutableLiveData<>();
     @NonNull
     private final ObservableInt callTime = new ObservableInt(0);
     @NonNull
@@ -59,7 +58,7 @@ public class CallViewModel extends BaseViewModel {
 
     //전화 연결 되었을때 작업
     public void call() {
-        isCalling.set(true);
+        isCalling.setValue(true);
 
         addDisposable(Observable.interval(1, TimeUnit.SECONDS)
                 .map(Long::intValue)
@@ -87,7 +86,7 @@ public class CallViewModel extends BaseViewModel {
     }
 
     @NonNull
-    public ObservableBoolean getIsCalling() {
+    public MutableLiveData<Boolean> getIsCalling() {
         return isCalling;
     }
 

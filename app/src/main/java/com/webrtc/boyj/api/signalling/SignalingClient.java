@@ -47,7 +47,7 @@ public class SignalingClient {
 
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_SDP, args -> {
             SdpPayload payload = SdpPayload.fromJson((String) args[0]);
-            Logger.d("Description : " + payload.getSdp().description);
+            // Logger.d("Description : " + payload.getSdp().description);
             sdpSubject.onNext(payload.getSdp());
         });
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_ICE, args -> {
@@ -59,7 +59,7 @@ public class SignalingClient {
 
     public void emitDial(@NonNull final DialPayload dialPayload) {
         Logger.d("emitDial()");
-        socketIOClient.emit(SignalingEventString.EVENT_DIAL, dialPayload.toJson());
+        socketIOClient.emit(SignalingEventString.EVENT_DIAL, dialPayload.getDeviceToken());
     }
 
     public void emitDial(@NonNull final String room) {

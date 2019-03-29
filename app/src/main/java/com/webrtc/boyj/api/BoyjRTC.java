@@ -66,8 +66,6 @@ public class BoyjRTC {
                     IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
                     signalingClient.emitIceCandidate(iceCandidatePayload);
                 }),
-                peerConnectionClient.getRemoteMediaStreamSubject().subscribe(mediaStream -> {
-                }),
                 signalingClient.getSdpSubject().subscribe(sdp -> {
                     Logger.d("getSdpSubject()");
                     peerConnectionClient.setRemoteSdp(sdp);
@@ -75,7 +73,10 @@ public class BoyjRTC {
                         peerConnectionClient.createAnswer();
                     }
                 }),
-                signalingClient.getIceCandidateSubject().subscribe(peerConnectionClient::addIceCandidate)
+                signalingClient.getIceCandidateSubject().subscribe(candidate -> {
+                    Logger.d(candidate.toString());
+                    peerConnectionClient.addIceCandidate(candidate);
+                })
         );
     }
 

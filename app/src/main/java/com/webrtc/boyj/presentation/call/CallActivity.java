@@ -6,8 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintSet;
-import android.transition.TransitionManager;
 
 import com.webrtc.boyj.R;
 import com.webrtc.boyj.databinding.ActivityCallBinding;
@@ -38,26 +36,22 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
 
     private void initViews() {
         findViewById(R.id.fab_reject).setOnClickListener(__ -> hangUp());
-        findViewById(R.id.fab_left).setOnClickListener(__ -> call());
     }
 
     private void initViewModel(@NonNull final String tel) {
         final CallViewModel vm = ViewModelProviders.of(this,
                 new CallViewModelFactory(tel)).get(CallViewModel.class);
+
+        vm.getIsCalling().observe(this, isCalling -> callAnimation());
         binding.setVm(vm);
     }
 
-    private void call() {
-        binding.getVm().call();
-        callAnimation();
-    }
-
     private void callAnimation() {
-        final ConstraintSet set = new ConstraintSet();
+/*        final ConstraintSet set = new ConstraintSet();
         set.clone(this, R.layout.activity_call_calling);
 
         TransitionManager.beginDelayedTransition(binding.root);
-        set.applyTo(binding.root);
+        set.applyTo(binding.root);*/
     }
 
     // Todo : Hangup handling

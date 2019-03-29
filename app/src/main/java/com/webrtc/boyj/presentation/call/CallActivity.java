@@ -26,7 +26,6 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
 
         final Intent intent = getIntent();
 
-        final User user = (User) intent.getSerializableExtra(EXTRA_USER);
         final User otherUser = (User) intent.getSerializableExtra(EXTRA_OTHER_USER);
         final boolean isCaller = intent.getBooleanExtra(EXTRA_IS_CALLER, true);
 
@@ -35,10 +34,14 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
 
         // Todo : Handle "Caller" and "Callee" by next issue
         if (isCaller) {
-
+            binding.getVm().dial();
         } else {
 
         }
+
+        binding.getVm().remoteMediaStream().subscribe(mediaStream -> {
+
+        });
     }
 
     private void initViews() {

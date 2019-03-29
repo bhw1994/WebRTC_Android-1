@@ -21,6 +21,12 @@ import io.reactivex.subjects.PublishSubject;
 
 public class PeerConnectionClient {
 
+    public PeerConnectionClient() {
+
+    }
+
+    private static final List<String> stunServerUrls = new ArrayList<>();
+    private static final List<String> turnServerUrls = new ArrayList<>();
     @NonNull
     private static final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
 
@@ -37,6 +43,35 @@ public class PeerConnectionClient {
 
 
     static {
+        stunServerUrls.add("stun:tk-turn1.xirsys.com");
+        turnServerUrls.add("turn:tk-turn1.xirsys.com:80?transport=udp");
+        turnServerUrls.add("turn:tk-turn1.xirsys.com:3478?transport=udp");
+        turnServerUrls.add("turn:tk-turn1.xirsys.com:80?transport=tcp");
+        turnServerUrls.add("turn:tk-turn1.xirsys.com:3478?transport=tcp");
+        turnServerUrls.add("turns:tk-turn1.xirsys.com:443?transport=tcp");
+        turnServerUrls.add("turns:tk-turn1.xirsys.com:5349?transport=tcp");
+
+        for (String stunServerUrl : stunServerUrls) {
+            iceServers.add(
+                    PeerConnection.IceServer.builder(stunServerUrl).createIceServer()
+            );
+        }
+
+        for (String turnServerUrl : turnServerUrls) {
+            iceServers.add(
+                    PeerConnection.IceServer.builder(turnServerUrl)
+                            .setUsername("aa1f1c54-39c4-11e9-9ab4-8a1138a37ce0")
+                            .setPassword("aa1f1ccc-39c4-11e9-9fd9-42348e526b10")
+                            .createIceServer()
+
+            );
+        }
+
+
+
+
+
+
         /*
         RTC Configuration:
             https://developer.mozilla.org/en-US/docs/Web/API/RTCConfiguration
@@ -63,12 +98,12 @@ public class PeerConnectionClient {
     @NonNull
     private PublishSubject<MediaStream> remoteMediaStreamSubject = PublishSubject.create();
 
-    public void createPeerConnection(boolean isCaller) {
+    public void createPeerConnection() {
         final PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfiguration, new BoyjPeerConnectionObserver());
+    }
 
-        if (isCaller) {
-            peerConnection.createOffer(new BoyjSdpObserver(), constraints);
-        }
+    public void createOffer() {
+        peerConnection.createOffer(new BoyjSdpObserver(), constraints);
     }
 
     public void setRtcConfiguration(PeerConnection.RTCConfiguration rtcConfiguration) {
@@ -166,7 +201,6 @@ public class PeerConnectionClient {
 
         @Override
         public void onCreateFailure(String s) {
-
         }
 
         @Override
@@ -174,6 +208,4 @@ public class PeerConnectionClient {
 
         }
     }
-
-
 }

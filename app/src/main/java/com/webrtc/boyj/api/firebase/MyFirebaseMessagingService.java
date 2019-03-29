@@ -12,11 +12,9 @@ import com.webrtc.boyj.api.signalling.payload.AwakenPayload;
 import com.webrtc.boyj.api.signalling.payload.FCMPayload;
 import com.webrtc.boyj.data.repository.UserRepositoryImpl;
 import com.webrtc.boyj.presentation.ringing.RingingActivity;
-import com.webrtc.boyj.utils.App;
 import com.webrtc.boyj.utils.Logger;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
-
 
     @NonNull
     private static final String TAG = "BOYJ_MyFCMService";
@@ -37,7 +35,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         final AwakenPayload awakenPayload = new AwakenPayload.Builder(room).build();
         boyjRTC.awaken(awakenPayload);
     }
-
 
     @Override
     public void onNewToken(@NonNull final String token) {

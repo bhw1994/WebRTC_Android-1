@@ -9,10 +9,13 @@ import com.webrtc.boyj.api.signalling.payload.DialPayload;
 import com.webrtc.boyj.data.model.User;
 import com.webrtc.boyj.presentation.BaseViewModel;
 
+import org.webrtc.MediaStream;
+
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.subjects.PublishSubject;
 
 public class CallViewModel extends BaseViewModel {
     @NonNull
@@ -25,17 +28,36 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     private final BoyjRTC boyjRTC;
 
+    @NonNull
+    private final MediaStream localMediaStream;
+
     public CallViewModel(@NonNull User otherUser) {
 
         this.otherUser = otherUser;
+        this.boyjRTC = new BoyjRTC();
 
-        boyjRTC = new BoyjRTC();
+        boyjRTC.startCapture();
+        this.localMediaStream = boyjRTC.getUserMedia();
+
+        boyjRTC.attachEvent();
+
+    }
+
+    public PublishSubject<MediaStream> remoteMediaStream() {
+        return boyjRTC.remoteMediaStream();
     }
 
     //전화 거는 요청
     public void dial() {
-        DialPayload dialPayload = new DialPayload.Builder(otherUser.getDeviceToken()).build();
+        final DialPayload dialPayload = new DialPayload.Builder(otherUser.getDeviceToken()).build();
         boyjRTC.dial(dialPayload);
+
+        boyjRTC.attachCallerListener();
+
+    }
+
+    public void join() {
+        boyjRTC.attachCalleeListener();
     }
 
     //전화 연결 되었을때 작업

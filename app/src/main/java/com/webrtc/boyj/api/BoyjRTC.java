@@ -37,15 +37,12 @@ public class BoyjRTC {
     public BoyjRTC() {
     }
 
-    public void release() {
-        signalingClient.disconnect();
-        peerConnectionClient.release();
-        userMediaManager.stopCapture();
-        compositeDisposable.dispose();
-    }
-
     public void startCapture() {
         userMediaManager.startCapture();
+    }
+
+    public void toggle() {
+
     }
 
     public void stopCapture() {
@@ -128,5 +125,12 @@ public class BoyjRTC {
 
     public PublishSubject<MediaStream> remoteMediaStream() {
         return peerConnectionClient.getRemoteMediaStreamSubject();
+    }
+
+    public void release() {
+        signalingClient.disconnect();
+        peerConnectionClient.release();
+        userMediaManager.stopCapture();
+        compositeDisposable.dispose();
     }
 }

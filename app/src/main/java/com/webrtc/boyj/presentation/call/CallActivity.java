@@ -3,6 +3,7 @@ package com.webrtc.boyj.presentation.call;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,22 +37,18 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
 
     private void initViews() {
         findViewById(R.id.fab_reject).setOnClickListener(__ -> hangUp());
+
+        AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        if (!manager.isSpeakerphoneOn()) {
+            manager.setSpeakerphoneOn(true);
+        }
     }
 
     private void initViewModel(@NonNull final String tel) {
         final CallViewModel vm = ViewModelProviders.of(this,
                 new CallViewModelFactory(tel)).get(CallViewModel.class);
 
-        vm.getIsCalling().observe(this, isCalling -> callAnimation());
         binding.setVm(vm);
-    }
-
-    private void callAnimation() {
-/*        final ConstraintSet set = new ConstraintSet();
-        set.clone(this, R.layout.activity_call_calling);
-
-        TransitionManager.beginDelayedTransition(binding.root);
-        set.applyTo(binding.root);*/
     }
 
     // Todo : Hangup handling

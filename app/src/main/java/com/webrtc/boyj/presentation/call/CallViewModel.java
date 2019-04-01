@@ -1,6 +1,7 @@
 package com.webrtc.boyj.presentation.call;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.databinding.ObservableBoolean;
 import android.databinding.ObservableInt;
 import android.support.annotation.NonNull;
 
@@ -19,9 +20,9 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     private final String tel;
     @NonNull
-    private final MutableLiveData<Boolean> isCalling = new MutableLiveData<>();
-    @NonNull
     private final ObservableInt callTime = new ObservableInt(0);
+    @NonNull
+    private final ObservableBoolean isCalling = new ObservableBoolean();
     @NonNull
     private final BoyjRTC boyjRTC;
     @NonNull
@@ -31,8 +32,8 @@ public class CallViewModel extends BaseViewModel {
 
     CallViewModel(@NonNull final String tel) {
         this.tel = tel;
-        boyjRTC = new BoyjRTC();
 
+        boyjRTC = new BoyjRTC();
         localMediaStream.setValue(boyjRTC.getUserMedia());
         boyjRTC.startCapture();
 
@@ -58,7 +59,7 @@ public class CallViewModel extends BaseViewModel {
 
     //전화 연결 되었을때 작업
     public void call() {
-        isCalling.setValue(true);
+        isCalling.set(true);
 
         addDisposable(Observable.interval(1, TimeUnit.SECONDS)
                 .map(Long::intValue)
@@ -76,6 +77,11 @@ public class CallViewModel extends BaseViewModel {
     }
 
     @NonNull
+    public ObservableBoolean getIsCalling() {
+        return isCalling;
+    }
+
+    @NonNull
     public MutableLiveData<MediaStream> getLocalMediaStream() {
         return localMediaStream;
     }
@@ -83,11 +89,6 @@ public class CallViewModel extends BaseViewModel {
     @NonNull
     public MutableLiveData<MediaStream> getRemoteMediaStream() {
         return remoteMediaStream;
-    }
-
-    @NonNull
-    public MutableLiveData<Boolean> getIsCalling() {
-        return isCalling;
     }
 
     @NonNull

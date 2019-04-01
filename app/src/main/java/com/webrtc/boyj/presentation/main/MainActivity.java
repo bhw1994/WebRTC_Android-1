@@ -69,8 +69,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                             notExistPhoneNumber();
                         } else {
                             tel = number.replace("+82", "0");
-                            init();
                         }
+                        init();
                     }
 
                     @Override
@@ -111,6 +111,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void notExistPhoneNumber() {
+        tel = "01000000000";
         showToast(getString(R.string.ERROR_PHONE_NUMBER_NOT_EXIST));
     }
 

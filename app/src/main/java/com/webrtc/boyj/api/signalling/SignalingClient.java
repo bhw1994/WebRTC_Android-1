@@ -59,17 +59,13 @@ public class SignalingClient {
 
     public void emitDial(@NonNull final DialPayload dialPayload) {
         Logger.d("emitDial()");
-        socketIOClient.emit(SignalingEventString.EVENT_DIAL, dialPayload.getDeviceToken());
-    }
 
-    public void emitDial(@NonNull final String room) {
-        Logger.d("emitDial()");
-        socketIOClient.emit(SignalingEventString.EVENT_DIAL, room);
+        socketIOClient.emit(SignalingEventString.EVENT_DIAL, dialPayload.toJsonObject());
     }
 
     public void emitAwaken(@NonNull final AwakenPayload awakenPayload) {
         Logger.d("emitAwaken()");
-        socketIOClient.emit(SignalingEventString.EVENT_AWAKEN, awakenPayload.toJson());
+        socketIOClient.emit(SignalingEventString.EVENT_AWAKEN, awakenPayload.toJsonObject());
     }
 
     public void emitAccept() {
@@ -81,11 +77,11 @@ public class SignalingClient {
     }
 
     public void emitSdp(@NonNull final SdpPayload sdpPayload) {
-        socketIOClient.emit(SignalingEventString.EVENT_SEND_SDP, sdpPayload.toJson());
+        socketIOClient.emit(SignalingEventString.EVENT_SEND_SDP, sdpPayload.toJsonObject());
     }
 
     public void emitIceCandidate(@NonNull final IceCandidatePayload iceCandidatePayload) {
-        socketIOClient.emit(SignalingEventString.EVENT_SEND_ICE, iceCandidatePayload.toJson());
+        socketIOClient.emit(SignalingEventString.EVENT_SEND_ICE, iceCandidatePayload.toJsonObject());
     }
 
     public void emitBye() {

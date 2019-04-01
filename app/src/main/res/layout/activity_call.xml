@@ -30,7 +30,6 @@
             android:id="@+id/view_remote"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:background="@color/colorBlack"
             app:mediaStream="@{vm.remoteMediaStream}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

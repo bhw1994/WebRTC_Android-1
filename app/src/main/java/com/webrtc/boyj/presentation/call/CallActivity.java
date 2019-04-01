@@ -37,7 +37,9 @@ public class CallActivity extends BaseActivity<ActivityCallBinding> {
 
     private void initViews() {
         findViewById(R.id.fab_reject).setOnClickListener(__ -> hangUp());
+    }
 
+    private void turnOnSpeaker() {
         AudioManager manager = (AudioManager) getSystemService(AUDIO_SERVICE);
         if (!manager.isSpeakerphoneOn()) {
             manager.setSpeakerphoneOn(true);

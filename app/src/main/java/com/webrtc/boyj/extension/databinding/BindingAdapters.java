@@ -1,6 +1,7 @@
 package com.webrtc.boyj.extension.databinding;
 
 import android.annotation.SuppressLint;
+import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

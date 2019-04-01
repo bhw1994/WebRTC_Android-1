@@ -33,7 +33,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Nullable
     private String tel;
-    private boolean isTest = true;
+    private boolean isTest = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

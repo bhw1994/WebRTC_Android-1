@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
 import org.webrtc.SessionDescription;
 
 public class SdpPayload extends Payload {
@@ -19,6 +20,7 @@ public class SdpPayload extends Payload {
         Gson gson = new Gson();
         return gson.fromJson(jsonString, SdpPayload.class);
     }
+
 
     @NonNull
     public SessionDescription getSdp() {

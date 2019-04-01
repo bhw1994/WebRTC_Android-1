@@ -10,6 +10,7 @@ import com.webrtc.boyj.api.signalling.payload.IceCandidatePayload;
 import com.webrtc.boyj.api.signalling.payload.SdpPayload;
 import com.webrtc.boyj.utils.Logger;
 
+import org.json.JSONObject;
 import org.webrtc.IceCandidate;
 import org.webrtc.SessionDescription;
 
@@ -46,12 +47,15 @@ public class SignalingClient {
         socketIOClient.on(SignalingEventString.EVENT_READY, args -> readySubject.onComplete());
 
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_SDP, args -> {
-            SdpPayload payload = SdpPayload.fromJson((String) args[0]);
+            JSONObject jsonObject = (JSONObject) args[0];
+            SdpPayload payload = SdpPayload.fromJson(jsonObject.toString());
             // Logger.d("Description : " + payload.getSdp().description);
             sdpSubject.onNext(payload.getSdp());
         });
         socketIOClient.on(SignalingEventString.EVENT_RECEIVE_ICE, args -> {
-            IceCandidatePayload payload = IceCandidatePayload.fromJson((String) args[0]);
+            JSONObject jsonObject = (JSONObject) args[0];
+
+            IceCandidatePayload payload = IceCandidatePayload.fromJson(jsonObject.toString());
             iceCandidateSubject.onNext(payload.getIceCandidate());
         });
         socketIOClient.connect();

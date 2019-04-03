@@ -12,6 +12,11 @@ public class DialPayload extends Payload {
         this.deviceToken = deviceToken;
     }
 
+    @NonNull
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
     public static class Builder {
 
         @NonNull

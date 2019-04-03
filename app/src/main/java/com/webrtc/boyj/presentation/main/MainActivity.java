@@ -33,6 +33,7 @@ import static android.Manifest.permission.RECORD_AUDIO;
 public class MainActivity extends BaseActivity<ActivityMainBinding> {
     @Nullable
     private String tel;
+    private boolean isTest = true;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,16 +58,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
                 .setPermissionListener(new PermissionListener() {
                     @Override
                     public void onPermissionGranted() {
-                        final TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-                        final String number = tm.getLine1Number();
-                        if (TextUtils.isEmpty(number)) {
-                            notExistPhoneNumber();
-                        } else {
-                            tel = number.replace("+82", "0");
+                        if (isTest) {
+                            tel = "010-1111-2222";
+                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext())
+                                    .edit()
+                                    .putBoolean(UserRepositoryImpl.CHANGED, true)
+                                    .apply();
                             init();
+                        } else {
+                            final TelephonyManager tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                            final String number = tm.getLine1Number();
+                            if (TextUtils.isEmpty(number)) {
+                                notExistPhoneNumber();
+                            } else {
+                                tel = number.replace("+82", "0");
+                                init();
+                            }
                         }
                     }
-
                     @Override
                     public void onPermissionDenied(List<String> deniedPermissions) {
                         showToast(getString(R.string.ERROR_PERMISSION_DENIED));

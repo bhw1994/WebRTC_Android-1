@@ -21,8 +21,7 @@ import io.reactivex.subjects.CompletableSubject;
 import io.reactivex.subjects.PublishSubject;
 
 public class BoyjRTC {
-    @NonNull
-    private final static SignalingClient signalingClient = new SignalingClient();
+    private SignalingClient signalingClient;
     private PeerConnectionClient peerConnectionClient;
     private UserMediaManager userMediaManager;
     @NonNull
@@ -31,6 +30,7 @@ public class BoyjRTC {
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     public BoyjRTC() {
+        signalingClient=new SignalingClient();
     }
 
 

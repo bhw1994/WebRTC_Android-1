@@ -2,9 +2,6 @@ package com.webrtc.boyj.api.peer;
 
 import android.support.annotation.NonNull;
 
-import com.webrtc.boyj.api.peer.manager.PeerConnectionFactoryManager;
-import com.webrtc.boyj.utils.Logger;
-
 import org.webrtc.DataChannel;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
@@ -39,8 +36,9 @@ public class PeerConnectionClient {
 
     public PeerConnectionClient(@NonNull final PeerConnectionFactory peerConnectionFactory) {
         this.peerConnectionFactory = peerConnectionFactory;
-        this.rtcConfiguration = createRtcConfiguration();
         this.iceServerList = IceServers.getIceServerList();
+        this.rtcConfiguration = createRtcConfiguration();
+
 
         this.constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveAudio", "true"));
         this.constraints.mandatory.add(new MediaConstraints.KeyValuePair("OfferToReceiveVideo", "true"));

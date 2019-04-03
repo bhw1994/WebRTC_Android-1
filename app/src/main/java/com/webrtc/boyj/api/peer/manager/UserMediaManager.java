@@ -10,7 +10,6 @@ import org.webrtc.Camera1Enumerator;
 import org.webrtc.Camera2Enumerator;
 import org.webrtc.CameraEnumerator;
 import org.webrtc.MediaConstraints;
-import org.webrtc.MediaSource;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SurfaceTextureHelper;

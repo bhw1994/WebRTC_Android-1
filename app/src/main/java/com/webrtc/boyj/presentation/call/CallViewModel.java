@@ -34,8 +34,9 @@ public class CallViewModel extends BaseViewModel {
         this.tel = tel;
 
         boyjRTC = new BoyjRTC();
-        localMediaStream.setValue(boyjRTC.getUserMedia());
+        boyjRTC.initRTC();
         boyjRTC.startCapture();
+        localMediaStream.setValue(boyjRTC.getUserMedia());
 
         addDisposable(boyjRTC.remoteMediaStream()
                 .observeOn(AndroidSchedulers.mainThread())

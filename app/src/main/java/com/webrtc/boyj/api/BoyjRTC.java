@@ -34,16 +34,13 @@ public class BoyjRTC {
     }
 
 
-
-
-
     public PublishSubject<MediaStream> remoteMediaStream() {
         return peerConnectionClient.getRemoteMediaStreamSubject();
     }
 
-    public void readyToCall(@NonNull final boolean isCaller) {
+    public void readyToCall(final boolean isCaller) {
         compositeDisposable.add(signalingClient.getReadySubject().subscribe(() -> {
-            initRTC();
+
 
             peerConnectionClient.createPeerConnection();
             peerConnectionClient.addStreamToLocalPeer(getUserMedia());
@@ -92,7 +89,6 @@ public class BoyjRTC {
     }
 
 
-
     //앱 유저로 부터 온 이벤트 처리
     public void dial(@NonNull final DialPayload dialPayload) {
         signalingClient.emitDial(dialPayload);
@@ -110,8 +106,9 @@ public class BoyjRTC {
         signalingClient.emitBye();
         release();
     }
+
     @NonNull
-    public CompletableSubject bye(){
+    public CompletableSubject bye() {
         return signalingClient.getByeSubject();
     }
 
@@ -131,8 +128,6 @@ public class BoyjRTC {
     public CompletableSubject knock() {
         return signalingClient.getKnockSubject();
     }
-
-
 
 
 }

@@ -3,6 +3,7 @@ package com.webrtc.boyj.api;
 import android.support.annotation.NonNull;
 
 import com.webrtc.boyj.api.peer.PeerConnectionClient;
+import com.webrtc.boyj.api.peer.manager.PeerConnectionFactoryManager;
 import com.webrtc.boyj.api.peer.manager.UserMediaManager;
 import com.webrtc.boyj.api.signalling.SignalingClient;
 import com.webrtc.boyj.api.signalling.payload.AwakenPayload;
@@ -12,6 +13,7 @@ import com.webrtc.boyj.api.signalling.payload.SdpPayload;
 import com.webrtc.boyj.utils.Logger;
 
 import org.webrtc.MediaStream;
+import org.webrtc.PeerConnectionFactory;
 import org.webrtc.SessionDescription;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -20,51 +22,31 @@ import io.reactivex.subjects.PublishSubject;
 
 public class BoyjRTC {
     @NonNull
-    private final static SignalingClient signalingClient;
+    private final static SignalingClient signalingClient = new SignalingClient();
+    private PeerConnectionClient peerConnectionClient;
+    private UserMediaManager userMediaManager;
     @NonNull
-    private final static PeerConnectionClient peerConnectionClient;
-    @NonNull
-    private final static UserMediaManager userMediaManager;
+    private final PeerConnectionFactory factory = PeerConnectionFactoryManager.createPeerConnectionFactory();
     @NonNull
     private final CompositeDisposable compositeDisposable = new CompositeDisposable();
-
-    static {
-        signalingClient = new SignalingClient();
-        peerConnectionClient = new PeerConnectionClient();
-        userMediaManager = new UserMediaManager();
-    }
 
     public BoyjRTC() {
     }
 
-    public void startCapture() {
-        userMediaManager.startCapture();
-    }
+    public void initRTC() {
+        userMediaManager = new UserMediaManager(factory);
+        peerConnectionClient = new PeerConnectionClient(factory);
 
-    public void toggle() {
-
-    }
-
-    public void stopCapture() {
-        userMediaManager.stopCapture();
-    }
-
-    public MediaStream getUserMedia() {
-        return userMediaManager.getUserMedia();
-    }
-
-    private void initRTC() {
         compositeDisposable.addAll(
                 peerConnectionClient.getSdpSubject().subscribe(sessionDescription -> {
                     final SdpPayload sdpPayload = new SdpPayload.Builder(sessionDescription).build();
                     signalingClient.emitSdp(sdpPayload);
                 }),
                 peerConnectionClient.getIceCandidateSubject().subscribe(iceCandidate -> {
-                    IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
+                    final IceCandidatePayload iceCandidatePayload = new IceCandidatePayload.Builder(iceCandidate).build();
                     signalingClient.emitIceCandidate(iceCandidatePayload);
                 }),
                 signalingClient.getSdpSubject().subscribe(sdp -> {
-                    Logger.d("getSdpSubject()");
                     peerConnectionClient.setRemoteSdp(sdp);
                     if (sdp.type == SessionDescription.Type.OFFER) {
                         peerConnectionClient.createAnswer();
@@ -77,9 +59,20 @@ public class BoyjRTC {
         );
     }
 
+    public void startCapture() {
+        userMediaManager.startCapture();
+    }
+
+    public void stopCapture() {
+        userMediaManager.stopCapture();
+    }
+
+    public MediaStream getUserMedia() {
+        return userMediaManager.getLocalMediaStream();
+    }
+
     public void attachCalleeListener() {
         compositeDisposable.add(signalingClient.getReadySubject().subscribe(() -> {
-            initRTC();
             peerConnectionClient.createPeerConnection();
             peerConnectionClient.addStreamToLocalPeer(getUserMedia());
         }));
@@ -88,7 +81,6 @@ public class BoyjRTC {
     public void attachCallerListener() {
         compositeDisposable.add(
                 signalingClient.getReadySubject().subscribe(() -> {
-                    initRTC();
                     peerConnectionClient.createPeerConnection();
                     peerConnectionClient.addStreamToLocalPeer(getUserMedia());
                     peerConnectionClient.createOffer();
@@ -111,7 +103,6 @@ public class BoyjRTC {
     public void hangUp() {
         signalingClient.emitBye();
         release();
-        signalingClient.disconnect();
     }
 
     public void awaken(@NonNull final AwakenPayload payload) {
@@ -123,13 +114,14 @@ public class BoyjRTC {
         return signalingClient.getKnockSubject();
     }
 
+    @NonNull
     public PublishSubject<MediaStream> remoteMediaStream() {
         return peerConnectionClient.getRemoteMediaStreamSubject();
     }
 
-    public void release() {
+    private void release() {
         signalingClient.disconnect();
-        peerConnectionClient.release();
+        peerConnectionClient.dispose();
         userMediaManager.stopCapture();
         compositeDisposable.dispose();
     }

@@ -56,6 +56,7 @@ public class BoyjRTC {
     public void readyToCall(@NonNull final boolean isCaller) {
         compositeDisposable.add(signalingClient.getReadySubject().subscribe(() -> {
             initRTC();
+
             peerConnectionClient.createPeerConnection();
             peerConnectionClient.addStreamToLocalPeer(getUserMedia());
             if (isCaller) {
@@ -105,6 +106,7 @@ public class BoyjRTC {
     }
 
     private void initRTC() {
+        userMediaManager.init();
         compositeDisposable.addAll(
                 peerConnectionClient.getSdpSubject().subscribe(sessionDescription -> {
                     final SdpPayload sdpPayload = new SdpPayload.Builder(sessionDescription).build();

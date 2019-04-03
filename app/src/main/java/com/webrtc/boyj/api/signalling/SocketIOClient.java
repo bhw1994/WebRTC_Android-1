@@ -40,6 +40,7 @@ public class SocketIOClient {
     }
 
     public void emit(@NonNull final String event, @Nullable final Object... args) {
+        connect();
         socket.emit(event, args);
     }
 

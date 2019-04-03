@@ -32,7 +32,7 @@ public class SignalingClient {
     private CompletableSubject readySubject = CompletableSubject.create();
     @NonNull
     private CompletableSubject byeSubject = CompletableSubject.create();
-    
+
     @NonNull
     private PublishSubject<IceCandidate> iceCandidateSubject = PublishSubject.create();
     @NonNull
@@ -52,6 +52,7 @@ public class SignalingClient {
             IceCandidatePayload payload = IceCandidatePayload.fromJsonObject((JSONObject) args[0]);
             iceCandidateSubject.onNext(payload.getIceCandidate());
         });
+        socketIOClient.on(SignalingEventString.EVENT_BYE,args -> byeSubject.onComplete());
         socketIOClient.connect();
     }
 

@@ -142,7 +142,7 @@ public class PeerConnectionClient {
 
     public void release() {
         peerConnection.dispose();
-        peerConnectionFactory.dispose();
+        //peerConnectionFactory.dispose();
     }
 
     private class BoyjPeerConnectionObserver implements PeerConnection.Observer {

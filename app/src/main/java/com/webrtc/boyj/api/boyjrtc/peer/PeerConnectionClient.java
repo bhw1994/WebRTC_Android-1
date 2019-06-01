@@ -63,13 +63,9 @@ public class PeerConnectionClient {
         boyjPeerConnection.addIceCandidate(targetId, iceCandidate);
     }
 
-    public void dispose(@NonNull final String targetId) {
-        boyjPeerConnection.dispose(targetId);
-    }
 
-    public void disposeAll() {
-        boyjPeerConnection.disposeAll();
-    }
+
+
 
     @NonNull
     public Observable<IceCandidatePayload> iceCandidate() {
@@ -106,8 +102,13 @@ public class PeerConnectionClient {
         return boyjPeerConnection.isOfferer(id);
     }
 
-    public void removeConnection(String id) {
-        boyjPeerConnection.removeConnection(id);
+    public void removeConnection(String id,MediaStream localStream) {
+        boyjPeerConnection.removeConnection(id,localStream);
+    }
+    public void removeAllConnection(MediaStream localStream){
+        for(String id : boyjPeerConnection.getPeersId()){
+            removeConnection(id,localStream);
+        }
     }
 
     public boolean isConnected(String id) {

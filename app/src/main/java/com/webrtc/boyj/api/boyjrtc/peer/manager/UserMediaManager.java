@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.webrtc.boyj.App;
+import com.webrtc.boyj.data.common.IDManager;
 
 import org.webrtc.AudioSource;
 import org.webrtc.AudioTrack;
@@ -30,7 +31,7 @@ public final class UserMediaManager {
     public UserMediaManager(@NonNull final PeerConnectionFactory peerConnectionFactory) {
         this.peerConnectionFactory = peerConnectionFactory;
 
-        mediaStream = peerConnectionFactory.createLocalMediaStream("LocalMediaStream");
+        mediaStream = peerConnectionFactory.createLocalMediaStream(IDManager.getSavedUserId(App.getContext()) +"MediaStream");
         capturer = createVideoCapturer(App.getContext());
 
         mediaStream.addTrack(createVideoTrack());

@@ -110,28 +110,21 @@ class BoyjPeerConnection {
         getConnectionById(id).addIceCandidate(candidate);
     }
 
-    void dispose(@NonNull final String id) {
-        //getConnectionById(id).dispose();
-        connections.remove(id);
-    }
-
-    void disposeAll() {
-        for (PeerConnection pc : connections.values()) {
-            try {
-                pc.dispose();
-            } catch (Exception e) {
-
-            }
-
-        }
-    }
 
     private PeerConnection getConnectionById(@NonNull final String id) {
         return connections.get(id);
     }
 
-    public void removeConnection(String id) {
+    public void removeConnection(String id,MediaStream localStream) {
+        connections.get(id).removeStream(localStream);
+        try {
+            Logger.BOYJ("connection dispose");
+            connections.get(id).dispose();
+        } catch (Exception e) {
+        }
+        Logger.BOYJ("connection remove");
         connections.remove(id);
+
     }
 
     public boolean isConnected(String id) {

@@ -11,19 +11,20 @@ public class IceServers {
 
     }
 
+
     public static List<PeerConnection.IceServer> getIceServerList() {
         final List<PeerConnection.IceServer> iceServerList = new ArrayList<>();
         final List<String> stunUrlList = new ArrayList<>(
-                Arrays.asList("stun:tk-turn1.xirsys.com")
+                Arrays.asList("stun:tk-turn2.xirsys.com")
         );
         final List<String> turnUrlList = new ArrayList<>(
                 Arrays.asList(
-                        "turn:tk-turn1.xirsys.com:80?transport=udp",
-                        "turn:tk-turn1.xirsys.com:3478?transport=udp",
-                        "turn:tk-turn1.xirsys.com:80?transport=tcp",
-                        "turn:tk-turn1.xirsys.com:3478?transport=tcp",
-                        "turns:tk-turn1.xirsys.com:443?transport=tcp",
-                        "turns:tk-turn1.xirsys.com:5349?transport=tcp"
+                        "turn:tk-turn2.xirsys.com:80?transport=udp",
+                        "turn:tk-turn2.xirsys.com:3478?transport=udp",
+                        "turn:tk-turn2.xirsys.com:80?transport=tcp",
+                        "turn:tk-turn2.xirsys.com:3478?transport=tcp",
+                        "turns:tk-turn2.xirsys.com:443?transport=tcp",
+                        "turns:tk-turn2.xirsys.com:5349?transport=tcp"
                 )
         );
 
@@ -37,8 +38,8 @@ public class IceServers {
         for (final String turnServerUrl : turnUrlList) {
             iceServerList.add(
                     PeerConnection.IceServer.builder(turnServerUrl)
-                            .setUsername("aa1f1c54-39c4-11e9-9ab4-8a1138a37ce0")
-                            .setPassword("aa1f1ccc-39c4-11e9-9fd9-42348e526b10")
+                            .setUsername("E6UT9AEw-gT6pRHfSu9K1_Au4PwnHZ3v4KgpY0amvGeGl5U7uguqyqj9ZTvhU8GGAAAAAFzytKpsZWVzbDY1")
+                            .setPassword("07daff58-8492-11e9-8aad-066b071c7196")
                             .createIceServer()
             );
         }

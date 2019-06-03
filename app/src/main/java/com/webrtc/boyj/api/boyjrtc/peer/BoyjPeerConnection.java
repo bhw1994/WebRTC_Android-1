@@ -116,6 +116,10 @@ class BoyjPeerConnection {
     }
 
     public void removeConnection(String id,MediaStream localStream) {
+        if ( ! connections.containsKey(id) ) {
+            return;
+        }
+
         connections.get(id).removeStream(localStream);
         try {
             Logger.BOYJ("connection dispose");

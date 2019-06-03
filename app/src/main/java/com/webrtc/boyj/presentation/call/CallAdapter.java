@@ -1,5 +1,6 @@
 package com.webrtc.boyj.presentation.call;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,6 +73,11 @@ public class CallAdapter extends SplitLayout.Adapter {
         final BoyjSurfaceView surfaceView = view.findViewById(R.id.surface);
         final MediaStream mediaStream = boyjMediaStream.getMediaStream();
 
+        final List<VideoTrack> tracks = mediaStream.videoTracks;
+        if ( tracks.size() == 0 ) {
+            Log.d("bhw1994", "video tracks is not initialized");
+            return;
+        }
         final VideoTrack track = mediaStream.videoTracks.get(0);
         track.addSink(surfaceView);
     }

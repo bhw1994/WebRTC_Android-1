@@ -38,8 +38,8 @@ public class IceServers {
         for (final String turnServerUrl : turnUrlList) {
             iceServerList.add(
                     PeerConnection.IceServer.builder(turnServerUrl)
-                            .setUsername("E6UT9AEw-gT6pRHfSu9K1_Au4PwnHZ3v4KgpY0amvGeGl5U7uguqyqj9ZTvhU8GGAAAAAFzytKpsZWVzbDY1")
-                            .setPassword("07daff58-8492-11e9-8aad-066b071c7196")
+                            .setUsername("wA4EAkk6Bw3h3m4nLoJ5MXOTPQEZxB008D322l6vAtBZnclAtRghCvOWA8I9PfGPAAAAAFz0u0diaHcxOTk0")
+                            .setPassword("260645f6-85c7-11e9-821c-066b071c7196")
                             .createIceServer()
             );
         }
